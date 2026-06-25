@@ -1,0 +1,23 @@
+# Unique project name so this stack never collides with the reports bot (or
+# anything else) on the VPS.
+name: game-news-bot
+
+services:
+  bot:
+    build: .
+    image: game-news-bot
+    container_name: game-news-bot
+    restart: unless-stopped
+    # Outbound-only: no ports published, so nothing can conflict on the host.
+    env_file:
+      - .env
+    # Persist the "already posted" state across restarts and rebuilds, so it
+    # never re-announces the same news / free game.
+    volumes:
+      - ./data:/app/data
+    # Keep logs from growing unbounded on the VPS.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,8 @@
+{
+  "epicFreeGames": true,
+  "steam": [
+    { "appid": 730, "name": "Counter-Strike 2" },
+    { "appid": 252490, "name": "Rust" },
+    { "appid": 1086940, "name": "Baldur's Gate 3" }
+  ]
+}

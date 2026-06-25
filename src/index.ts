@@ -14,18 +14,23 @@ async function checkSteam(cfg: Config, state: State): Promise<Embed[]> {
     const key = String(w.appid);
     let items;
     try {
-      items = await fetchSteamNews(w.appid);
+      items = await fetchSteamNews(w.appid, cfg.steamIncludePress);
     } catch (e) {
       console.error(`[steam] ${key}: ${(e as Error).message}`);
       continue;
     }
+    const name = w.name || `App ${w.appid}`;
     const seen = new Set(state.steamSeen[key] ?? []);
     if (!state.steamSeeded[key]) {
-      state.steamSeeded[key] = true; // first run: seed without posting
+      state.steamSeeded[key] = true;
+      // First run: post just the latest item so a fresh deploy shows real content
+      // immediately, then mark the rest seen (no history dump).
+      const latest = items[0];
+      if (latest) out.push(steamEmbed(w.appid, name, latest));
     } else {
       // Oldest-first so the channel reads chronologically.
       for (const item of items.filter((i) => !seen.has(i.gid)).reverse()) {
-        out.push(steamEmbed(w.appid, w.name || `App ${w.appid}`, item));
+        out.push(steamEmbed(w.appid, name, item));
       }
     }
     const merged = [...items.map((i) => i.gid), ...(state.steamSeen[key] ?? [])];
@@ -51,9 +56,25 @@ async function checkEpic(cfg: Config, state: State): Promise<Embed[]> {
   return out;
 }
 
+// One-time "online" confirmation so a fresh deploy visibly reports in.
+function startupEmbed(cfg: Config): Embed {
+  const watching = [`${cfg.steam.length} Steam game(s) for official updates`];
+  if (cfg.epicFreeGames) watching.push("Epic free games");
+  return {
+    title: "game-news-bot is online",
+    description: `Watching ${watching.join(" and ")}. New posts will appear here.`,
+    color: 0x57f287,
+  };
+}
+
 async function tick(cfg: Config): Promise<void> {
   const state = loadState(cfg.stateFile);
-  const embeds = [...(await checkSteam(cfg, state)), ...(await checkEpic(cfg, state))];
+  const embeds: Embed[] = [];
+  if (!state.started) {
+    embeds.push(startupEmbed(cfg));
+    state.started = true;
+  }
+  embeds.push(...(await checkSteam(cfg, state)), ...(await checkEpic(cfg, state)));
   if (embeds.length) {
     console.log(`[post] ${embeds.length} update(s)`);
     await postEmbeds(cfg.webhookUrl, embeds, cfg.dryRun);

@@ -1,5 +1,6 @@
 {
   "epicFreeGames": true,
+  "steamIncludePress": false,
   "steam": [
     { "appid": 730, "name": "Counter-Strike 2" },
     { "appid": 252490, "name": "Rust" },

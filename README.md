@@ -8,11 +8,13 @@ an interval and posts when something is new.
 
 - Every `POLL_MINUTES`, it fetches:
   - Steam news (`ISteamNews/GetNewsForApp`, public, no key) for each game in
-    `watchlist.json`, and
+    `watchlist.json` — **official announcements / patch notes only** by default
+    (set `"steamIncludePress": true` to also include gaming-press articles), and
   - the current Epic free games (the public promotions feed).
-- It diffs against `data/state.json` so each item posts **once**. The first time
-  it sees a Steam game it records the current news silently (no history dump);
-  after that it posts genuinely new items.
+- It diffs against `data/state.json` so each item posts **once**. After the first
+  run it posts only genuinely new items.
+- **On a fresh deploy** it posts a one-time "online" confirmation plus the latest
+  post for each tracked game, so you can immediately see it working.
 - Updates go out as Discord embeds (game image, title, link, timestamp).
 
 ## Setup
@@ -71,6 +73,7 @@ services:
 | `.env` | `POLL_MINUTES` | Poll interval, minutes (min 5, default 30). |
 | `.env` | `DRY_RUN` | `1` = print instead of post. |
 | `watchlist.json` | `steam[]` | `{ "appid": number, "name": string }` per game. |
+| `watchlist.json` | `steamIncludePress` | `false` (default) = official posts only; `true` = include press. |
 | `watchlist.json` | `epicFreeGames` | `true`/`false` to toggle Epic free-game posts. |
 
 ## Notes / extending

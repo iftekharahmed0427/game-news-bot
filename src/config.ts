@@ -7,6 +7,7 @@ export type Config = {
   pollMinutes: number;
   stateFile: string;
   steam: Watch[];
+  steamIncludePress: boolean; // false = official Steam announcements only
   epicFreeGames: boolean;
   dryRun: boolean;
 };
@@ -41,16 +42,19 @@ export function loadConfig(): Config {
 
   let steam: Watch[] = [];
   let epicFreeGames = true;
+  let steamIncludePress = false;
   try {
     const raw = JSON.parse(readFileSync(watchPath, "utf8")) as {
       steam?: Watch[];
       epicFreeGames?: boolean;
+      steamIncludePress?: boolean;
     };
     steam = (raw.steam ?? []).filter((w) => Number.isFinite(w.appid));
     if (typeof raw.epicFreeGames === "boolean") epicFreeGames = raw.epicFreeGames;
+    if (typeof raw.steamIncludePress === "boolean") steamIncludePress = raw.steamIncludePress;
   } catch {
     console.warn(`[config] could not read ${watchPath}; no Steam games will be tracked.`);
   }
 
-  return { webhookUrl, pollMinutes, stateFile, steam, epicFreeGames, dryRun };
+  return { webhookUrl, pollMinutes, stateFile, steam, steamIncludePress, epicFreeGames, dryRun };
 }

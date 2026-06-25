@@ -26,9 +26,14 @@ an interval and posts when something is new.
    cp .env.example .env
    # set DISCORD_WEBHOOK_URL=...
    ```
-3. **Pick your Steam games** in `watchlist.json`. The `appid` is the number in a
-   game's store URL: `store.steampowered.com/app/<appid>/...`. Set
-   `"epicFreeGames": false` if you don't want the Epic free-game posts.
+3. Create your watchlist from the template and **pick your Steam games**:
+   ```sh
+   cp watchlist.example.json watchlist.json
+   ```
+   The `appid` is the number in a game's store URL:
+   `store.steampowered.com/app/<appid>/...`. Set `"epicFreeGames": false` to skip
+   the Epic free-game posts. `watchlist.json` is git-ignored, so your edits on the
+   server are never overwritten by a `git pull`.
 
 ## Run it
 

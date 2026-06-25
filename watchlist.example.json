@@ -2,8 +2,8 @@
   "epicFreeGames": true,
   "steamIncludePress": false,
   "steam": [
-    { "appid": 730, "name": "Counter-Strike 2" },
     { "appid": 252490, "name": "Rust" },
-    { "appid": 1086940, "name": "Baldur's Gate 3" }
+    { "appid": 346110, "name": "ARK: Survival Evolved" },
+    { "appid": 440900, "name": "Conan Exiles" }
   ]
 }

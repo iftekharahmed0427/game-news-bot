@@ -2,3 +2,7 @@ node_modules
 data
 .env
 *.log
+
+# Local config, copied from watchlist.example.json and edited per deployment.
+# Kept out of git so VPS edits never collide with a pull.
+watchlist.json
